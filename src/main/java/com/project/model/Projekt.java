@@ -10,18 +10,19 @@ public class Projekt {
     private String opis;
     private LocalDateTime dataCzasUtworzenia;
     private LocalDate dataOddania;
-    
-    
-    public Projekt() {}
-    
-    
-    public Projekt(String nazwa, String opis, LocalDate dataOddania){
+
+
+    public Projekt() {
+    }
+
+
+    public Projekt(String nazwa, String opis, LocalDate dataOddania) {
         this.nazwa = nazwa;
         this.opis = opis;
         this.dataOddania = dataOddania;
-        
+
     }
-    
+
     public Projekt(Integer projektId, String nazwa, String opis, LocalDateTime dataCzasUtworzenia, LocalDate dataOddania) {
         this.projektId = projektId;
         this.nazwa = nazwa;
@@ -29,17 +30,15 @@ public class Projekt {
         this.dataCzasUtworzenia = dataCzasUtworzenia;
         this.dataOddania = dataOddania;
     }
-    
+
     public Projekt(String nazwa, String opis, LocalDateTime dataCzasUtworzenia, LocalDate dataOddania) {
         this.nazwa = nazwa;
         this.opis = opis;
         this.dataCzasUtworzenia = dataCzasUtworzenia;
         this.dataOddania = dataOddania;
-        
+
     }
-    
-    
-    
+
 
     public Integer getProjektId() {
         return projektId;

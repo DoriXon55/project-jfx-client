@@ -37,29 +37,28 @@ public class ProjektDAOImpl implements ProjektDAO {
     public void setProjekt(Projekt projekt) {
         boolean isInsert = projekt.getProjektId() == null;
         String query = isInsert ? "INSERT INTO projekt(nazwa, opis, dataczas_utworzenia, data_oddania) VALUES (?,?,?,?)" : "UPDATE projekt SET nazwa = ?, opis = ?, dataczas_utworzenia = ?, data_oddania = ?" + "WHERE projekt_id = ?";
-        try(Connection connection = DataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            
+        try (Connection connection = DataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
             preparedStatement.setString(1, projekt.getNazwa());
             preparedStatement.setString(2, projekt.getOpis());
-            
-            if(projekt.getDataCzasUtworzenia() == null) projekt.setDataCzasUtworzenia(LocalDateTime.now());
+
+            if (projekt.getDataCzasUtworzenia() == null) projekt.setDataCzasUtworzenia(LocalDateTime.now());
             
             preparedStatement.setObject(3, projekt.getDataCzasUtworzenia());
             preparedStatement.setObject(4, projekt.getDataOddania());
-            
-            
-            if(!isInsert) preparedStatement.setInt(5, projekt.getProjektId());
+
+
+            if (!isInsert) preparedStatement.setInt(5, projekt.getProjektId());
             int liczbaDodanychWieszy = preparedStatement.executeUpdate();
-            
-            if(isInsert && liczbaDodanychWieszy > 0)
-            {
+
+            if (isInsert && liczbaDodanychWieszy > 0) {
                 ResultSet keys = preparedStatement.getGeneratedKeys();
-                if(keys.next()) projekt.setProjektId(keys.getInt(1));
+                if (keys.next()) projekt.setProjektId(keys.getInt(1));
                 keys.close();
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);  
+            throw new RuntimeException(e);
         }
     }
 
@@ -102,7 +101,7 @@ public class ProjektDAOImpl implements ProjektDAO {
                     projekty.add(projekt);
                 }
             }
-        }catch(SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return projekty;

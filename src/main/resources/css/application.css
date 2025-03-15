@@ -1,7 +1,7 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
 .table-column {
-  -fx-alignment: CENTER_LEFT;
+    -fx-alignment: CENTER_LEFT;
 }
 
 .table-row-cell {
@@ -14,7 +14,7 @@
 }
 
 .table-row-cell:odd {
-	-fx-background-color: #EAE9E8;
+    -fx-background-color: #EAE9E8;
 }
 
 .table-view:focused .table-row-cell:filled:focused:selected {
