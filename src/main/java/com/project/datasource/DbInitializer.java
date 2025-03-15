@@ -43,7 +43,46 @@ public class DbInitializer {
 
     private DbInitializer() {
     }
+    
+    
+    /* Function for ensure that every column exists in the zadanie table */
+    /*
+    public static void ensureColumnsExist() {
+        try (Connection connection = DataSource.getConnection();
+             Statement statement = connection.createStatement()) {
 
+            // Check if the columns exist and add them if they don't
+            try {
+                statement.executeQuery("SELECT status FROM zadanie WHERE 1=0");
+            } catch (SQLException e) {
+                if (e.getMessage().contains("not found") || e.getMessage().contains("doesn't exist")) {
+                    statement.executeUpdate("ALTER TABLE zadanie ADD COLUMN status VARCHAR(20)");
+                    System.out.println("Added missing column: status");
+                }
+            }
+
+            try {
+                statement.executeQuery("SELECT data_rozpoczecia FROM zadanie WHERE 1=0");
+            } catch (SQLException e) {
+                if (e.getMessage().contains("not found") || e.getMessage().contains("doesn't exist")) {
+                    statement.executeUpdate("ALTER TABLE zadanie ADD COLUMN data_rozpoczecia DATE");
+                    System.out.println("Added missing column: data_rozpoczecia");
+                }
+            }
+
+            try {
+                statement.executeQuery("SELECT data_zakonczenia FROM zadanie WHERE 1=0");
+            } catch (SQLException e) {
+                if (e.getMessage().contains("not found") || e.getMessage().contains("doesn't exist")) {
+                    statement.executeUpdate("ALTER TABLE zadanie ADD COLUMN data_zakonczenia DATE");
+                    System.out.println("Added missing column: data_zakonczenia");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to check and update database schema", e);
+        }
+    }
+    */
     public static void init() {
         try (Connection conection = DataSource.getConnection()) {
             boolean initialAutocommit = conection.getAutoCommit();

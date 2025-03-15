@@ -30,8 +30,8 @@ public class ZadanieDAOImpl implements ZadanieDAO {
     public void setZadanie(Zadanie zadanie) {
         boolean isInsert = zadanie.getZadanieId() == null;
         String query = isInsert
-                ? "INSERT INTO zadanie(projekt_id, nazwa, opis, kolejnosc) VALUES (?,?,?,?)"
-                : "UPDATE zadanie SET projekt_id = ?, nazwa = ?, opis = ?, kolejnosc = ? WHERE zadanie_id = ?";
+                ? "INSERT INTO zadanie(projekt_id, nazwa, opis, kolejnosc, status, data_rozpoczecia, data_zakonczenia) VALUES (?,?,?,?,?,?,?)"
+                : "UPDATE zadanie SET projekt_id = ?, nazwa = ?, opis = ?, kolejnosc = ?, status = ?, data_rozpoczecia = ?, data_zakonczenia = ? WHERE zadanie_id = ?";
         try (Connection connection = DataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -40,8 +40,26 @@ public class ZadanieDAOImpl implements ZadanieDAO {
             preparedStatement.setString(3, zadanie.getOpis());
             preparedStatement.setInt(4, zadanie.getKolejnosc());
 
+            if (zadanie.getStatus() != null) {
+                preparedStatement.setString(5, zadanie.getStatus());
+            } else {
+                preparedStatement.setNull(5, Types.VARCHAR);
+            }
+
+            if (zadanie.getDataRozpoczecia() != null) {
+                preparedStatement.setDate(6, java.sql.Date.valueOf(zadanie.getDataRozpoczecia()));
+            } else {
+                preparedStatement.setNull(6, Types.DATE);
+            }
+
+            if (zadanie.getDataZakonczenia() != null) {
+                preparedStatement.setDate(7, java.sql.Date.valueOf(zadanie.getDataZakonczenia()));
+            } else {
+                preparedStatement.setNull(7, Types.DATE);
+            }
+
             if (!isInsert) {
-                preparedStatement.setInt(5, zadanie.getZadanieId());
+                preparedStatement.setInt(8, zadanie.getZadanieId());
             }
 
             int affectedRows = preparedStatement.executeUpdate();
@@ -108,49 +126,28 @@ public class ZadanieDAOImpl implements ZadanieDAO {
 
     private Zadanie mapResultSetToZadanie(ResultSet rs) throws SQLException {
         Zadanie zadanie = new Zadanie();
-
-        // Always set these required fields
         zadanie.setZadanieId(rs.getInt("zadanie_id"));
         zadanie.setProjektId(rs.getInt("projekt_id"));
         zadanie.setNazwa(rs.getString("nazwa"));
+        zadanie.setOpis(rs.getString("opis"));
         zadanie.setKolejnosc(rs.getInt("kolejnosc"));
 
-        // Safely handle potentially missing or null columns
-        try {
-            zadanie.setOpis(rs.getString("opis"));
-        } catch (SQLException e) {
-            zadanie.setOpis(null);
+        String status = rs.getString("status");
+        if (!rs.wasNull()) {
+            zadanie.setStatus(status);
         }
 
-        try {
-            zadanie.setDataCzasUtworzenia(rs.getObject("dataczas_utworzenia", java.time.LocalDateTime.class));
-        } catch (SQLException e) {
-            zadanie.setDataCzasUtworzenia(null);
+        java.sql.Date dataRozp = rs.getDate("data_rozpoczecia");
+        if (dataRozp != null) {
+            zadanie.setDataRozpoczecia(dataRozp.toLocalDate());
         }
 
-        try {
-            zadanie.setStatus(rs.getString("status"));
-        } catch (SQLException e) {
-            zadanie.setStatus(null);
+        java.sql.Date dataZak = rs.getDate("data_zakonczenia");
+        if (dataZak != null) {
+            zadanie.setDataZakonczenia(dataZak.toLocalDate());
         }
 
-        try {
-            java.sql.Date dataRozp = rs.getDate("data_rozpoczecia");
-            if (dataRozp != null) {
-                zadanie.setDataRozpoczecia(dataRozp.toLocalDate());
-            }
-        } catch (SQLException e) {
-            zadanie.setDataRozpoczecia(null);
-        }
-
-        try {
-            java.sql.Date dataZak = rs.getDate("data_zakonczenia");
-            if (dataZak != null) {
-                zadanie.setDataZakonczenia(dataZak.toLocalDate());
-            }
-        } catch (SQLException e) {
-            zadanie.setDataZakonczenia(null);
-        }
+        zadanie.setDataCzasUtworzenia(rs.getObject("dataczas_utworzenia", java.time.LocalDateTime.class));
 
         return zadanie;
     }

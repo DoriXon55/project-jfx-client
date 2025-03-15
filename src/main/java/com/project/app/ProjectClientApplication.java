@@ -21,7 +21,7 @@ public class ProjectClientApplication extends Application {
 
     public static void main(String[] args) {
         DbInitializer.init();
-        launch(ProjectClientApplication.class, args);
+		launch(ProjectClientApplication.class, args);
     }
 
 	@Override
@@ -31,7 +31,6 @@ public class ProjectClientApplication extends Application {
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ProjectFrame.fxml"));
 
-		// Use controller factory instead of direct setController
 		loader.setControllerFactory(param -> {
 			if (param == ProjectController.class) {
 				return new ProjectController(projektDAO, zadanieDAO);
@@ -47,4 +46,5 @@ public class ProjectClientApplication extends Application {
 		primaryStage.sizeToScene();
 		primaryStage.show();
 	}
+	
 }

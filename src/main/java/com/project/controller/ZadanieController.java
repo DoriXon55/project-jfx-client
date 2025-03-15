@@ -266,14 +266,12 @@ public class ZadanieController {
                     zadanie.setDataRozpoczecia(dpDataRozpoczecia.getValue());
                     zadanie.setDataZakonczenia(dpDataZakonczenia.getValue());
 
-                    // Add this code to set kolejnosc if it's null
                     if (zadanie.getKolejnosc() == null) {
                         try {
                             // Get count of current tasks to determine next sequence number
                             List<Zadanie> existingZadania = zadanieDAO.getZadaniaByProjekt(projekt.getProjektId());
                             zadanie.setKolejnosc(existingZadania.size() + 1);
                         } catch (Exception e) {
-                            // Fallback to a default value if query fails
                             zadanie.setKolejnosc(1);
                         }
                     }
