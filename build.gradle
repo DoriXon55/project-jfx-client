@@ -13,6 +13,11 @@ repositories {
 }
 
 dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.36'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
 	implementation group: 'org.hsqldb', name: 'hsqldb', version: '2.7.4'
 	implementation group: 'com.zaxxer', name: 'HikariCP', version: '6.2.1'
 	implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.17'
@@ -47,9 +52,12 @@ jlink {
 	javaHome = "C:/Users/doria/IdeaProjects/project-jfx-client/src/jdk-21" // ścieżka do JDK, zmień jeśli trzeba!
     launcher {
         name = "$project.name" // nazwa głównego katalogu projektu, będzie również nazwą pliku EXE uruchamiającego aplikację
+
+    }
+    jpackage{
+        args = ['--load-test-data'] // usunąć aby nie korzystać z loadTest z DbInitializer
     }
 }
-
 
 
 //task copyDb(type: Copy) {   // kopiowanie katalogu z bazą danych

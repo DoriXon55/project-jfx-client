@@ -15,6 +15,7 @@ module project.jfx.client {
     requires org.slf4j;
     requires ch.qos.logback.classic;
     requires ch.qos.logback.core;
+    requires static lombok;
 
     opens com.project.app to javafx.graphics, javafx.fxml, javafx.base, javafx.controls;
     opens com.project.model to javafx.graphics, javafx.fxml, javafx.base, javafx.controls;

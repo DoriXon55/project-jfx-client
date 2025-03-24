@@ -23,6 +23,7 @@ public class ProjectClientApplication extends Application {
 
 	public static void main(String[] args) {
 		DbInitializer.init();
+		DbInitializer.loadTestData();
 		launch(ProjectClientApplication.class, args);
 	}
 

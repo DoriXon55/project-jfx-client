@@ -1,8 +1,9 @@
 package com.project.datasource;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,4 +106,141 @@ public class DbInitializer {
         }
     }
 
+    public static void loadTestData() {
+        try (Connection conn = DataSource.getConnection()) {
+            // Sprawdzenie czy dane testowe już istnieją
+            try (Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM projekt")) {
+                rs.next();
+                if (rs.getInt(1) > 0) {
+                    logger.info("Dane testowe już istnieją w bazie");
+                    return;
+                }
+            }
+
+            conn.setAutoCommit(false);
+            try {
+                Map<String, Integer> projektyIds = new HashMap<>();
+                String insertProjektSQL = "INSERT INTO projekt (nazwa, opis, dataczas_utworzenia, data_oddania) VALUES (?, ?, ?, ?)";                try (PreparedStatement pstmt = conn.prepareStatement(insertProjektSQL, Statement.RETURN_GENERATED_KEYS)) {
+
+                    LocalDateTime now = LocalDateTime.now();
+                    pstmt.setString(1, "Aplikacja mobilna");
+                    pstmt.setString(2, "Tworzenie aplikacji mobilnej dla systemu Android");
+                    pstmt.setTimestamp(3, Timestamp.valueOf(now));
+                    pstmt.setDate(4, Date.valueOf(now.plusMonths(3).toLocalDate()));
+                    pstmt.executeUpdate();
+                    try (ResultSet keys = pstmt.getGeneratedKeys()) {
+                        if (keys.next()) {
+                            projektyIds.put("Aplikacja mobilna", keys.getInt(1));
+                        }
+                    }
+
+                    pstmt.setString(1, "Strona internetowa");
+                    pstmt.setString(2, "Stworzenie responsywnej strony internetowej");
+                    pstmt.setTimestamp(3, Timestamp.valueOf(now.minusDays(7)));
+                    pstmt.setDate(4, Date.valueOf(now.plusMonths(1).toLocalDate()));
+                    pstmt.executeUpdate();
+                    try (ResultSet keys = pstmt.getGeneratedKeys()) {
+                        if (keys.next()) {
+                            projektyIds.put("Strona internetowa", keys.getInt(1));
+                        }
+                    }
+
+                    pstmt.setString(1, "System zarządzania");
+                    pstmt.setString(2, "Wewnętrzny system zarządzania zasobami");
+                    pstmt.setTimestamp(3, Timestamp.valueOf(now.minusDays(14)));
+                    pstmt.setDate(4, Date.valueOf(now.plusMonths(6).toLocalDate()));
+                    pstmt.executeUpdate();
+                    try (ResultSet keys = pstmt.getGeneratedKeys()) {
+                        if (keys.next()) {
+                            projektyIds.put("System zarządzania", keys.getInt(1));
+                        }
+                    }
+                }
+
+                String insertZadanieSQL = "INSERT INTO zadanie (projekt_id, nazwa, opis, status, kolejnosc) VALUES (?, ?, ?, ?, ?)";
+                try (PreparedStatement pstmt = conn.prepareStatement(insertZadanieSQL)) {
+                    int projektId = projektyIds.get("Aplikacja mobilna");
+
+                    pstmt.setInt(1, projektId);
+                    pstmt.setString(2, "Planowanie architektury");
+                    pstmt.setString(3, "Zaplanowanie architektury aplikacji");
+                    pstmt.setString(4, "ZAKOŃCZONE");
+                    pstmt.setInt(5, 1);
+                    pstmt.executeUpdate();
+
+                    pstmt.setInt(1, projektId);
+                    pstmt.setString(2, "Projektowanie UI");
+                    pstmt.setString(3, "Zaprojektowanie interfejsu użytkownika");
+                    pstmt.setString(4, "W TRAKCIE");
+                    pstmt.setInt(5, 2);
+                    pstmt.executeUpdate();
+
+                    pstmt.setInt(1, projektId);
+                    pstmt.setString(2, "Implementacja logiki");
+                    pstmt.setString(3, "Implementacja głównych funkcjonalności");
+                    pstmt.setString(4, "NOWE");
+                    pstmt.setInt(5, 3);
+                    pstmt.executeUpdate();
+
+                    projektId = projektyIds.get("Strona internetowa");
+
+                    pstmt.setInt(1, projektId);
+                    pstmt.setString(2, "Projektowanie układu strony");
+                    pstmt.setString(3, "Tworzenie makiety strony");
+                    pstmt.setString(4, "ZAKOŃCZONE");
+                    pstmt.setInt(5, 1);
+                    pstmt.executeUpdate();
+
+                    pstmt.setInt(1, projektId);
+                    pstmt.setString(2, "Kodowanie HTML/CSS");
+                    pstmt.setString(3, "Implementacja front-endu");
+                    pstmt.setString(4, "W TRAKCIE");
+                    pstmt.setInt(5, 2);
+                    pstmt.executeUpdate();
+
+                    projektId = projektyIds.get("System zarządzania");
+
+                    pstmt.setInt(1, projektId);
+                    pstmt.setString(2, "Analiza wymagań");
+                    pstmt.setString(3, "Zebranie wymagań od interesariuszy");
+                    pstmt.setString(4, "ZAKOŃCZONE");
+                    pstmt.setInt(5, 1);
+                    pstmt.executeUpdate();
+
+                    pstmt.setInt(1, projektId);
+                    pstmt.setString(2, "Projektowanie bazy danych");
+                    pstmt.setString(3, "Zaprojektowanie struktury bazy danych");
+                    pstmt.setString(4, "ZAKOŃCZONE");
+                    pstmt.setInt(5, 2);
+                    pstmt.executeUpdate();
+
+                    pstmt.setInt(1, projektId);
+                    pstmt.setString(2, "Implementacja modułów");
+                    pstmt.setString(3, "Tworzenie głównych modułów systemu");
+                    pstmt.setString(4, "W TRAKCIE");
+                    pstmt.setInt(5, 3);
+                    pstmt.executeUpdate();
+
+                    pstmt.setInt(1, projektId);
+                    pstmt.setString(2, "Testowanie");
+                    pstmt.setString(3, "Przeprowadzenie testów systemu");
+                    pstmt.setString(4, "NOWE");
+                    pstmt.setInt(5, 4);
+                    pstmt.executeUpdate();
+                }
+
+                conn.commit();
+                logger.info("Pomyślnie załadowano dane testowe");
+            } catch (SQLException e) {
+                conn.rollback();
+                logger.error("Błąd podczas ładowania danych testowych", e);
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            logger.error("Błąd połączenia z bazą danych", e);
+        }
+    }
 }
