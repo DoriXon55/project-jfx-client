@@ -7,6 +7,7 @@ import com.project.dao.ZadanieDAO;
 import com.project.dao.ZadanieDAOImpl;
 import com.project.datasource.DbInitializer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -15,14 +16,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ProjectClientApplication extends Application {
-    private static final Logger logger = LoggerFactory.getLogger(ProjectClientApplication.class);
-    private FXMLLoader loader;
-    private Parent root;
+	private static final Logger logger = LoggerFactory.getLogger(ProjectClientApplication.class);
+	private FXMLLoader loader;
+	private Parent root;
+	private ProjectController controller;
 
-    public static void main(String[] args) {
-        DbInitializer.init();
+	public static void main(String[] args) {
+		DbInitializer.init();
 		launch(ProjectClientApplication.class, args);
-    }
+	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -33,7 +35,8 @@ public class ProjectClientApplication extends Application {
 
 		loader.setControllerFactory(param -> {
 			if (param == ProjectController.class) {
-				return new ProjectController(projektDAO, zadanieDAO);
+				controller = new ProjectController(projektDAO, zadanieDAO);
+				return controller;
 			}
 			return null;
 		});
@@ -44,7 +47,24 @@ public class ProjectClientApplication extends Application {
 		scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.sizeToScene();
+
+		primaryStage.setOnCloseRequest(event -> {
+			if (controller != null) {
+				controller.shutdown();
+			}
+			Platform.exit();
+			System.exit(0);
+		});
+
 		primaryStage.show();
 	}
-	
+
+	@Override
+	public void stop() {
+		if (controller != null) {
+			controller.shutdown();
+		}
+		Platform.exit();
+		System.exit(0);
+	}
 }

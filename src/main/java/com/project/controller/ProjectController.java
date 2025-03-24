@@ -331,16 +331,17 @@ public class ProjectController {
     }
 
     public void shutdown() {
-        if (wykonawca != null) {
-            wykonawca.shutdown();
-            try {
-                if (!wykonawca.awaitTermination(5, TimeUnit.SECONDS))
+        try {
+            if (wykonawca != null && !wykonawca.isShutdown()) {
+                wykonawca.shutdown();
+                if (!wykonawca.awaitTermination(3, TimeUnit.SECONDS)) {
                     wykonawca.shutdownNow();
-            } catch (InterruptedException e) {
-                wykonawca.shutdownNow();
+                }
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.error("Przerwano zamykanie wątków", e);
         }
-
     }
 
     private void edytujProjekt(Projekt projekt) {

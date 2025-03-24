@@ -44,7 +44,7 @@ application {
 }	
 
 jlink {
-	javaHome = "$projectDir/../../jdk-21" // ścieżka do JDK, zmień jeśli trzeba!
+	javaHome = "C:/Users/doria/IdeaProjects/project-jfx-client/src/jdk-21" // ścieżka do JDK, zmień jeśli trzeba!
     launcher {
         name = "$project.name" // nazwa głównego katalogu projektu, będzie również nazwą pliku EXE uruchamiającego aplikację
     }
