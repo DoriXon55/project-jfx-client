@@ -20,7 +20,7 @@ public class DbInitializer {
 		 CONSTRAINT projekt_pk PRIMARY KEY (projekt_id)
 		);
 		CREATE TABLE IF NOT EXISTS zadanie (
-        zadanie_id INTEGER IDENTITY NOT NULL,
+        zadanie_id SERIAL,
         nazwa VARCHAR(50) NOT NULL,
         opis CLOB,
         kolejnosc INTEGER NOT NULL,
